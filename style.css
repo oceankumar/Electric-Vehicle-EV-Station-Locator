@@ -20,3 +20,15 @@ body {
   display: none;
   font-size: 18px;
 }
+
+input, select {
+  padding: 8px;
+  margin: 10px 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.card:hover {
+  transform: scale(1.03);
+  transition: 0.2s;
+}
