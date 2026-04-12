@@ -11,6 +11,20 @@
   <!-- Loader -->
   <div id="loader">Loading...</div>
 
+<input type="text" id="search" placeholder="Search stations..." />
+
+<select id="filter">
+  <option value="all">All</option>
+  <option value="low">Connections < 2</option>
+  <option value="high">Connections ≥ 2</option>
+</select>
+
+<select id="sort">
+  <option value="default">Sort</option>
+  <option value="az">A → Z</option>
+  <option value="za">Z → A</option>
+</select>
+
   <!-- Data container -->
   <div id="stations"></div>
 
