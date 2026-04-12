@@ -1,6 +1,12 @@
 const loader = document.getElementById("loader");
 const container = document.getElementById("stations");
 
+const searchInput = document.getElementById("search");
+const filterSelect = document.getElementById("filter");
+const sortSelect = document.getElementById("sort");
+
+let allStations = [];
+
 async function fetchStations() {
   loader.style.display = "block";
 
@@ -17,25 +23,22 @@ async function fetchStations() {
     if (!res.ok) throw new Error("API failed");
 
     const data = await res.json();
+    allStations = data;
 
-    displayStations(data);
+    displayStations(allStations);
 
   } catch (error) {
-    console.error(error);
     container.innerHTML = "<p>⚠️ Error fetching data</p>";
   } finally {
     loader.style.display = "none";
   }
 }
 
-fetchStations();
-
 function displayStations(stations) {
   container.innerHTML = "";
 
   stations.forEach(station => {
     const div = document.createElement("div");
-
     div.className = "card";
 
     div.innerHTML = `
@@ -47,3 +50,43 @@ function displayStations(stations) {
     container.appendChild(div);
   });
 }
+
+function applyFilters() {
+  let result = [...allStations];
+
+  // 🔍 SEARCH
+  const keyword = searchInput.value.toLowerCase();
+  result = result.filter(station =>
+    station.AddressInfo.Title.toLowerCase().includes(keyword)
+  );
+
+  // 🎯 FILTER
+  const filterValue = filterSelect.value;
+
+  if (filterValue === "low") {
+    result = result.filter(station => (station.Connections?.length || 0) < 2);
+  } else if (filterValue === "high") {
+    result = result.filter(station => (station.Connections?.length || 0) >= 2);
+  }
+
+  // 🔃 SORT
+  const sortValue = sortSelect.value;
+
+  if (sortValue === "az") {
+    result = result.sort((a, b) =>
+      a.AddressInfo.Title.localeCompare(b.AddressInfo.Title)
+    );
+  } else if (sortValue === "za") {
+    result = result.sort((a, b) =>
+      b.AddressInfo.Title.localeCompare(a.AddressInfo.Title)
+    );
+  }
+
+  displayStations(result);
+}
+
+searchInput.addEventListener("input", applyFilters);
+filterSelect.addEventListener("change", applyFilters);
+sortSelect.addEventListener("change", applyFilters);
+
+fetchStations();
